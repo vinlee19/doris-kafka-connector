@@ -38,7 +38,6 @@ public class DorisSinkConnector extends SinkConnector {
     private static final Logger LOG = LoggerFactory.getLogger(DorisSinkConnector.class);
 
     private Map<String, String> config;
-    private String connectorName;
 
     /** No-Arg constructor. Required by Kafka Connect framework */
     public DorisSinkConnector() {}
@@ -52,9 +51,8 @@ public class DorisSinkConnector extends SinkConnector {
     @Override
     public void start(final Map<String, String> parsedConfig) {
         LOG.info("doris sink connector start");
-        config = new HashMap<>(parsedConfig);
+        config = DorisSinkConnectorConfig.convertToLowercase(parsedConfig);
         DorisSinkConnectorConfig.setDefaultValues(config);
-
         ConfigCheckUtils.validateConfig(config);
     }
 

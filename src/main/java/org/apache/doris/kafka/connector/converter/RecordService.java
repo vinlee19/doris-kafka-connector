@@ -126,9 +126,9 @@ public class RecordService {
     private void validate(SinkRecord record) {
         if (isSchemaChange(record)) {
             LOG.warn(
-                    "Schema change records are not supported by JDBC connector. Adjust `topics` or `topics.regex` to exclude schema change topic.");
+                    "Schema change records are not supported by doris-kafka-connector. Adjust `topics` or `topics.regex` to exclude schema change topic.");
             throw new DorisException(
-                    "Schema change records are not supported by JDBC connector. Adjust `topics` or `topics.regex` to exclude schema change topic.");
+                    "Schema change records are not supported by doris-kafka-connector. Adjust `topics` or `topics.regex` to exclude schema change topic.");
         }
     }
 
@@ -262,11 +262,6 @@ public class RecordService {
         }
     }
 
-    /** If not struct, map, list, use the default string */
-    public String processStringRecord(SinkRecord record) {
-        return record.value().toString();
-    }
-
     private String parseFieldValues(
             RecordDescriptor record, Struct source, List<String> fields, boolean isDelete) {
         Map<String, Object> filedMapping = new LinkedHashMap<>();
@@ -278,7 +273,7 @@ public class RecordService {
                     field.getSchema().isOptional()
                             ? source.getWithoutDefault(fieldName)
                             : source.get(fieldName);
-            Object convertValue = type.getValue(value);
+            Object convertValue = type.getValue(value, field.getSchema());
             if (Objects.nonNull(convertValue) && !type.isNumber()) {
                 filedMapping.put(fieldName, convertValue.toString());
             } else {

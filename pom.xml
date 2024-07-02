@@ -90,6 +90,8 @@
         <jackson.version>2.13.2.1</jackson.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
         <commons-io.version>2.3</commons-io.version>
+        <geometry.version>2.2.0</geometry.version>
+        <testcontainers.version>1.17.6</testcontainers.version>
     </properties>
 
     <repositories>
@@ -265,11 +267,45 @@
             <artifactId>kafka-connect-avro-converter</artifactId>
             <version>${confluent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-protobuf-serializer</artifactId>
+            <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-connect-protobuf-converter</artifactId>
+            <version>${confluent.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/io.debezium/debezium-core -->
         <dependency>
             <groupId>io.debezium</groupId>
             <artifactId>debezium-core</artifactId>
             <version>${debezium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esri.geometry</groupId>
+            <artifactId>esri-geometry-api</artifactId>
+            <version>${geometry.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -398,6 +434,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- When using mvn to build a project, ignore packages under specific paths-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/org/apache/doris/kafka/connector/e2e/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
